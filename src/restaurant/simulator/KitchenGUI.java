@@ -6,76 +6,74 @@ package restaurant.simulator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Admin
  */
-public class WelcomeGUI extends javax.swing.JFrame {
-    private JMenuBar menuBar;
-    private JMenu fileMenu, waiterMenu, menuMenu, configMenu;
-    private JMenuItem loadLicenseItem, loadWaiterDataItem, loadMenuOfDayItem, generalConfigItem;
-    private JTextArea informationArea;
-    private JButton startButton;
+public class KitchenGUI extends javax.swing.JFrame {
+    private JTable firstCourseTable, secondCourseTable;
+    private JButton refreshButton;
 
     /**
-     * Creates new form WelcomeGUI
+     * Creates new form KitchenGUI
      */
-    public WelcomeGUI() {
+    public KitchenGUI() {
         initComponents();
-        setTitle("Welcome to Restaurant Simulator");
-        setSize(600, 400);
+        setTitle("Kitchen GUI");
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        menuBar = new JMenuBar();
-        fileMenu = new JMenu("File");
-        waiterMenu = new JMenu("Waiter");
-        menuMenu = new JMenu("Menu");
-        configMenu = new JMenu("Config");
+        firstCourseTable = new JTable(10, 3);
+        secondCourseTable = new JTable(10, 3);
         
-        loadLicenseItem = new JMenuItem("Load License File");
-        loadWaiterDataItem = new JMenuItem("Load/Add Waiter Data");
-        loadMenuOfDayItem = new JMenuItem("Load Menu of the Day");
-        generalConfigItem = new JMenuItem("General Configuration");
+        refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(e -> refreshTables());
         
-        fileMenu.add(loadLicenseItem);
-        waiterMenu.add(loadWaiterDataItem);
-        menuMenu.add(loadMenuOfDayItem);
-        configMenu.add(generalConfigItem);
+        JPanel firstCoursePanel = new JPanel(new BorderLayout());
+        firstCoursePanel.add(new JScrollPane(firstCourseTable), BorderLayout.CENTER);
         
-        menuBar.add(fileMenu);
-        menuBar.add(waiterMenu);
-        menuBar.add(menuMenu);
-        menuBar.add(configMenu);
-        setJMenuBar(menuBar);
+        JPanel secondCoursePanel = new JPanel(new BorderLayout());
+        secondCoursePanel.add(new JScrollPane(secondCourseTable), BorderLayout.CENTER);
         
-        informationArea = new JTextArea();
-        informationArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(informationArea);
-        
-        startButton = new JButton("Start");
-        startButton.setEnabled(false);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(refreshButton);
         
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
-        container.add(scrollPane, BorderLayout.CENTER);
-        container.add(startButton, BorderLayout.SOUTH);
-        
-        loadLicenseItem.addActionListener(e -> {
-            // Código para cargar el archivo de licencia
-        });
-        
-        loadWaiterDataItem.addActionListener(e -> {
-            // Código para cargar/agregar datos de camareros
-        });
-        
-        loadMenuOfDayItem.addActionListener(e -> {
-            // Código para seleccionar el menú del día
-        });
-        
-        generalConfigItem.addActionListener(e -> {
-            // Código para la configuración general
-        });
+        container.add(firstCoursePanel, BorderLayout.WEST);
+        container.add(secondCoursePanel, BorderLayout.CENTER);
+        container.add(buttonPanel, BorderLayout.SOUTH);
+    }
+    
+    private void refreshTables() {
+        List<String[]> firstCourseData = generateRandomData(10, 3);
+        List<String[]> secondCourseData = generateRandomData(10, 3);
+        updateTable(firstCourseTable, firstCourseData);
+        updateTable(secondCourseTable, secondCourseData);
+    }
+    
+    private List<String[]> generateRandomData(int rows, int columns) {
+        List<String[]> data = new ArrayList<>();
+        for(int i=0;i<rows;i++){
+            String[] row = new String[columns];
+            for(int j=0;j<columns;j++){
+                row[j] = "Data " + (i+1) + "-" + (j+1);
+            }
+            data.add(row);
+        }
+        return data;
+    }
+    
+    private void updateTable(JTable table, List<String[]> data){
+        for(int i=0;i<data.size();i++){
+            String[] row = data.get(i);
+            for(int j=0;j<row.length;j++){
+                table.setValueAt(row[j],i,j);
+            }
+        }
     }
 
     /**
@@ -120,20 +118,20 @@ public class WelcomeGUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(KitchenGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(KitchenGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(KitchenGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(KitchenGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new WelcomeGUI().setVisible(true);
+                new KitchenGUI().setVisible(true);
             }
         });
     }
