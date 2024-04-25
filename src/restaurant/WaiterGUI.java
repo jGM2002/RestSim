@@ -2,80 +2,65 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package restaurant.simulator;
+package restaurant;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
  * @author Admin
  */
-public class WelcomeGUI extends javax.swing.JFrame {
-    private JMenuBar menuBar;
-    private JMenu fileMenu, waiterMenu, menuMenu, configMenu;
-    private JMenuItem loadLicenseItem, loadWaiterDataItem, loadMenuOfDayItem, generalConfigItem;
-    private JTextArea informationArea;
-    private JButton startButton;
+public class WaiterGUI extends javax.swing.JFrame {
+    private JPanel tablePanel;
+    private JButton[] tableButtons;
+    private boolean[] tablePaidStatus = new boolean[9];
 
     /**
-     * Creates new form WelcomeGUI
+     * Creates new form WaiterGUI
      */
-    public WelcomeGUI() {
+    public WaiterGUI() {
         initComponents();
-        setTitle("Welcome to Restaurant Simulator");
+        setTitle("Waiter GUI");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        menuBar = new JMenuBar();
-        fileMenu = new JMenu("File");
-        waiterMenu = new JMenu("Waiter");
-        menuMenu = new JMenu("Menu");
-        configMenu = new JMenu("Config");
+        tablePanel = new JPanel(new GridLayout(3, 3));
+        tableButtons = new JButton[9];
         
-        loadLicenseItem = new JMenuItem("Load License File");
-        loadWaiterDataItem = new JMenuItem("Load/Add Waiter Data");
-        loadMenuOfDayItem = new JMenuItem("Load Menu of the Day");
-        generalConfigItem = new JMenuItem("General Configuration");
-        
-        fileMenu.add(loadLicenseItem);
-        waiterMenu.add(loadWaiterDataItem);
-        menuMenu.add(loadMenuOfDayItem);
-        configMenu.add(generalConfigItem);
-        
-        menuBar.add(fileMenu);
-        menuBar.add(waiterMenu);
-        menuBar.add(menuMenu);
-        menuBar.add(configMenu);
-        setJMenuBar(menuBar);
-        
-        informationArea = new JTextArea();
-        informationArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(informationArea);
-        
-        startButton = new JButton("Start");
-        startButton.setEnabled(false);
+        for (int i = 0; i < tableButtons.length; i++) {
+            tableButtons[i] = new JButton("Table " + (i + 1));
+            tableButtons[i].setBackground(Color.ORANGE);
+            tableButtons[i].addActionListener(new TableButtonListener());
+            tablePanel.add(tableButtons[i]);
+        }
         
         Container container = getContentPane();
-        container.setLayout(new BorderLayout());
-        container.add(scrollPane, BorderLayout.CENTER);
-        container.add(startButton, BorderLayout.SOUTH);
-        
-        loadLicenseItem.addActionListener(e -> {
-            // Código para cargar el archivo de licencia
-        });
-        
-        loadWaiterDataItem.addActionListener(e -> {
-            // Código para cargar/agregar datos de camareros
-        });
-        
-        loadMenuOfDayItem.addActionListener(e -> {
-            // Código para seleccionar el menú del día
-        });
-        
-        generalConfigItem.addActionListener(e -> {
-            // Código para la configuración general
-        });
+        container.add(tablePanel, BorderLayout.CENTER);
+    }
+    
+    private class TableButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton button = (JButton) e.getSource();
+            int tableIndex = Integer.parseInt(button.getText().substring(6)) - 1;
+            showTableDialog(tableIndex);
+        }
+    }
+    
+    private void showTableDialog(int tableIndex) {
+        JDialog dialog = new JDialog(this, "Table " + (tableIndex + 1), true);
+        dialog.setSize(200, 150);
+        dialog.setLocationRelativeTo(this);
+
+        JLabel label = new JLabel("Table " + (tableIndex + 1));
+        JPanel panel = new JPanel();
+        panel.add(label);
+        dialog.add(panel);
+
+        dialog.setVisible(true);
     }
 
     /**
@@ -120,20 +105,20 @@ public class WelcomeGUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(WelcomeGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new WelcomeGUI().setVisible(true);
+                new WaiterGUI().setVisible(true);
             }
         });
     }

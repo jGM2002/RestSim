@@ -2,63 +2,70 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package restaurant.simulator;
+package restaurant;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  *
  * @author Admin
  */
-public class TableGUI extends javax.swing.JFrame {
-    private JTextArea orderTextArea;
-    private JButton modifyOrderButton, generateBillButton;
-    private boolean orderConfirmed = false;
+public class CooksGUI extends javax.swing.JFrame {
+    private JTable firstCourseTable, secondCourseTable;
+    private JButton refreshButton;
 
     /**
-     * Creates new form TableGUI
+     * Creates new form CooksGUI
      */
-    public TableGUI() {
+    public CooksGUI() {
         initComponents();
-        setTitle("Table GUI");
-        setSize(600, 400);
+        setTitle("Cooks GUI");
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        orderTextArea = new JTextArea();
-        orderTextArea.setEditable(false);
+        firstCourseTable = new JTable(10, 3);
+        secondCourseTable = new JTable(10, 3);
         
-        modifyOrderButton = new JButton("Modify Order");
-        modifyOrderButton.addActionListener(new ModifyOrderListener());
+        refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(e -> refreshTables());
         
-        generateBillButton = new JButton("Generate Bill");
-        generateBillButton.addActionListener(new GenerateBillListener());
-        generateBillButton.setEnabled(false);
+        JPanel firstCoursePanel = new JPanel(new BorderLayout());
+        firstCoursePanel.add(new JScrollPane(firstCourseTable), BorderLayout.CENTER);
+
+        JPanel secondCoursePanel = new JPanel(new BorderLayout());
+        secondCoursePanel.add(new JScrollPane(secondCourseTable), BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(refreshButton);
         
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
-        container.add(new JScrollPane(orderTextArea), BorderLayout.CENTER);
-        container.add(modifyOrderButton, BorderLayout.WEST);
-        container.add(generateBillButton, BorderLayout.EAST);
+        container.add(firstCoursePanel, BorderLayout.WEST);
+        container.add(secondCoursePanel, BorderLayout.CENTER);
+        container.add(buttonPanel, BorderLayout.SOUTH);
     }
     
-    private class ModifyOrderListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!orderConfirmed) {
-                JOptionPane.showMessageDialog(TableGUI.this, "Order modified successfully");
-            } else {
-                JOptionPane.showMessageDialog(TableGUI.this, "Cannot modify order after confirmation");
+    private void refreshTables() {
+        updateTable(firstCourseTable, generateRandomData(10, 3));
+        updateTable(secondCourseTable, generateRandomData(10, 3));
+    }
+    
+    private String[][] generateRandomData(int rows, int columns) {
+        String[][] data = new String[rows][columns];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                data[i][j] = "Data " + (i + 1) + "-" + (j + 1);
             }
         }
+        return data;
     }
     
-    private class GenerateBillListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(TableGUI.this, "Bill generated successfully");
+    private void updateTable(JTable table, String[][] data) {
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[i].length; j++) {
+                table.setValueAt(data[i][j], i, j);
+            }
         }
     }
 
@@ -104,20 +111,20 @@ public class TableGUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CooksGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CooksGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CooksGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CooksGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TableGUI().setVisible(true);
+                new CooksGUI().setVisible(true);
             }
         });
     }

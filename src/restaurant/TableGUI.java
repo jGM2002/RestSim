@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package restaurant.simulator;
+package restaurant;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,39 +13,52 @@ import java.awt.event.ActionListener;
  *
  * @author Admin
  */
-public class WaiterGUI extends javax.swing.JFrame {
-    private JPanel tablePanel;
-    private JButton[] tableButtons;
+public class TableGUI extends javax.swing.JFrame {
+    private JTextArea orderTextArea;
+    private JButton modifyOrderButton, generateBillButton;
+    private boolean orderConfirmed = false;
 
     /**
-     * Creates new form WaiterGUI
+     * Creates new form TableGUI
      */
-    public WaiterGUI() {
+    public TableGUI() {
         initComponents();
-        setTitle("Waiter GUI");
+        setTitle("Table GUI");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        tablePanel = new JPanel(new GridLayout(3, 3));
-        tableButtons = new JButton[9];
+        orderTextArea = new JTextArea();
+        orderTextArea.setEditable(false);
         
-        for (int i = 0; i < tableButtons.length; i++) {
-            tableButtons[i] = new JButton("Table " + (i + 1));
-            tableButtons[i].setBackground(Color.ORANGE);
-            tableButtons[i].addActionListener(new TableButtonListener());
-            tablePanel.add(tableButtons[i]);
-        }
+        modifyOrderButton = new JButton("Modify Order");
+        modifyOrderButton.addActionListener(new ModifyOrderListener());
+        
+        generateBillButton = new JButton("Generate Bill");
+        generateBillButton.addActionListener(new GenerateBillListener());
+        generateBillButton.setEnabled(false);
         
         Container container = getContentPane();
-        container.add(tablePanel, BorderLayout.CENTER);
+        container.setLayout(new BorderLayout());
+        container.add(new JScrollPane(orderTextArea), BorderLayout.CENTER);
+        container.add(modifyOrderButton, BorderLayout.WEST);
+        container.add(generateBillButton, BorderLayout.EAST);
     }
     
-    private class TableButtonListener implements ActionListener {
+    private class ModifyOrderListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JButton button = (JButton) e.getSource();
-            String tableName = button.getText();
-            JOptionPane.showMessageDialog(WaiterGUI.this, "Table " + tableName + " clicked");
+            if (!orderConfirmed) {
+                JOptionPane.showMessageDialog(TableGUI.this, "Order modified successfully");
+            } else {
+                JOptionPane.showMessageDialog(TableGUI.this, "Cannot modify order after confirmation");
+            }
+        }
+    }
+    
+    private class GenerateBillListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(TableGUI.this, "Bill generated successfully");
         }
     }
 
@@ -91,20 +104,20 @@ public class WaiterGUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(WaiterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new WaiterGUI().setVisible(true);
+                new TableGUI().setVisible(true);
             }
         });
     }
