@@ -5,9 +5,11 @@
 package restaurant;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalTime;
 
 /**
  *
@@ -17,18 +19,29 @@ public class TableGUI extends javax.swing.JFrame {
     private JTextArea orderTextArea;
     private JButton modifyOrderButton, generateBillButton;
     private boolean orderConfirmed = false;
+    private LocalTime closingTime = LocalTime.of(23, 0);
+    DefaultTableModel orderTableModel = new DefaultTableModel();
+    JTable orderTable = new JTable(orderTableModel);
+    private WaiterGUI waiterGUI;
 
     /**
      * Creates new form TableGUI
      */
-    public TableGUI() {
+    public TableGUI(WaiterGUI waiterGUI) {
+        this.waiterGUI = waiterGUI;
         initComponents();
         setTitle("Table GUI");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        orderTextArea = new JTextArea();
-        orderTextArea.setEditable(false);
+        orderTableModel.addColumn("Plato");
+        orderTableModel.addColumn("Cantidad");
+        orderTableModel.addColumn("Precio");
+        
+        JScrollPane scrollPane = new JScrollPane(orderTable);
+        Container container = getContentPane();
+        container.setLayout(new BorderLayout());
+        container.add(scrollPane, BorderLayout.CENTER);
         
         modifyOrderButton = new JButton("Modify Order");
         modifyOrderButton.addActionListener(new ModifyOrderListener());
@@ -36,10 +49,7 @@ public class TableGUI extends javax.swing.JFrame {
         generateBillButton = new JButton("Generate Bill");
         generateBillButton.addActionListener(new GenerateBillListener());
         generateBillButton.setEnabled(false);
-        
-        Container container = getContentPane();
-        container.setLayout(new BorderLayout());
-        container.add(new JScrollPane(orderTextArea), BorderLayout.CENTER);
+      
         container.add(modifyOrderButton, BorderLayout.WEST);
         container.add(generateBillButton, BorderLayout.EAST);
     }
@@ -47,10 +57,14 @@ public class TableGUI extends javax.swing.JFrame {
     private class ModifyOrderListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!orderConfirmed) {
-                JOptionPane.showMessageDialog(TableGUI.this, "Order modified successfully");
+            if (isOrderAllowed()) {
+                if (!orderConfirmed) {
+                    JOptionPane.showMessageDialog(TableGUI.this, "Order modified successfully");
+                } else {
+                    JOptionPane.showMessageDialog(TableGUI.this, "Cannot modify order after confirmation");
+                }
             } else {
-                JOptionPane.showMessageDialog(TableGUI.this, "Cannot modify order after confirmation");
+                JOptionPane.showMessageDialog(TableGUI.this, "Cannot place order after closing time");
             }
         }
     }
@@ -60,6 +74,11 @@ public class TableGUI extends javax.swing.JFrame {
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(TableGUI.this, "Bill generated successfully");
         }
+    }
+    
+    private boolean isOrderAllowed() {
+        LocalTime currentTime = LocalTime.now();
+        return currentTime.isBefore(closingTime);
     }
 
     /**
@@ -117,7 +136,8 @@ public class TableGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TableGUI().setVisible(true);
+                WaiterGUI waiterGUI = new WaiterGUI();
+                new TableGUI(waiterGUI).setVisible(true);
             }
         });
     }

@@ -120,6 +120,11 @@ public class WelcomeGUI extends javax.swing.JFrame {
                 "Bienvenido a Restaurant Simulator.\n" +
                 "Por favor, carga una licencia y los datos del día para empezar.\n" +
                 "Seleccione su idioma preferido en 'Idioma'.");
+        startButton.addActionListener(e -> {
+            WaiterGUI waiterGUI = new WaiterGUI();
+            waiterGUI.setVisible(true);
+            dispose();
+        });
     }
     
     private void updateInformationArea(String message) {

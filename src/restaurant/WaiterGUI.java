@@ -17,23 +17,28 @@ public class WaiterGUI extends javax.swing.JFrame {
     private JPanel tablePanel;
     private JButton[] tableButtons;
     private boolean[] tablePaidStatus = new boolean[9];
+    private Color[] originalColors = new Color[9];
 
     /**
      * Creates new form WaiterGUI
      */
     public WaiterGUI() {
-        initComponents();
         setTitle("Waiter GUI");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        for(int i=0;i<tablePaidStatus.length;i++){
+            tablePaidStatus[i] = true;
+        }
         
         tablePanel = new JPanel(new GridLayout(3, 3));
         tableButtons = new JButton[9];
         
         for (int i = 0; i < tableButtons.length; i++) {
             tableButtons[i] = new JButton("Table " + (i + 1));
-            tableButtons[i].setBackground(Color.ORANGE);
-            tableButtons[i].addActionListener(new TableButtonListener());
+            originalColors[i] = tableButtons[i].getBackground();
+            updateButtonColor(tableButtons[i], i);
+            tableButtons[i].addActionListener(new TableButtonListener(i, tableButtons[i]));
             tablePanel.add(tableButtons[i]);
         }
         
@@ -41,26 +46,55 @@ public class WaiterGUI extends javax.swing.JFrame {
         container.add(tablePanel, BorderLayout.CENTER);
     }
     
-    private class TableButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JButton button = (JButton) e.getSource();
-            int tableIndex = Integer.parseInt(button.getText().substring(6)) - 1;
-            showTableDialog(tableIndex);
+    private void updateButtonColor(JButton button, int tableIndex){
+        if(tablePaidStatus[tableIndex]){
+            button.setBackground(Color.GREEN);
+        }else {
+            button.setBackground(Color.RED);
         }
     }
     
-    private void showTableDialog(int tableIndex) {
-        JDialog dialog = new JDialog(this, "Table " + (tableIndex + 1), true);
-        dialog.setSize(200, 150);
-        dialog.setLocationRelativeTo(this);
+    private class TableButtonListener implements ActionListener {
+        private int tableIndex;
+        private JButton button;
 
-        JLabel label = new JLabel("Table " + (tableIndex + 1));
-        JPanel panel = new JPanel();
-        panel.add(label);
-        dialog.add(panel);
+        public TableButtonListener(int tableIndex, JButton button){
+            this.tableIndex = tableIndex;
+            this.button = button;
+        }
 
-        dialog.setVisible(true);
+        @Override
+        public void actionPerformed(ActionEvent e){
+            if (tablePaidStatus[tableIndex]) {
+                // Mostrar TableGUI al hacer clic en la mesa
+                TableGUI tableGUI = new TableGUI(WaiterGUI.this);
+                tableGUI.setVisible(true);
+            } else {
+                String[] options = {"Si", "No"};
+                int result = JOptionPane.showOptionDialog(WaiterGUI.this,
+                        "¿Está ocupada la mesa " + (tableIndex + 1) + "?",
+                        "Confirmar ocupación", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+                if (result == JOptionPane.YES_OPTION) {
+                    tablePaidStatus[tableIndex] = true;
+                    updateButtonColor(button, tableIndex);
+                }
+            }
+        }
+    }
+    
+    private void showTableDialog(int tableIndex, JButton button) {
+        String[] options = {"Si", "No"};
+        int result = JOptionPane.showOptionDialog(this,
+                "¿Sigue ocupada la mesa " + (tableIndex + 1) + "?",
+                "Confirmar ocupación", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        if (result == JOptionPane.NO_OPTION) {
+            tablePaidStatus[tableIndex] = false;
+            updateButtonColor(button, tableIndex);
+        }
     }
 
     /**
