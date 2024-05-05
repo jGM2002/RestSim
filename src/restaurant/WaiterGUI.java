@@ -25,7 +25,7 @@ public class WaiterGUI extends javax.swing.JFrame {
     public WaiterGUI() {
         setTitle("Waiter GUI");
         setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         
         for(int i=0;i<tablePaidStatus.length;i++){
             tablePaidStatus[i] = true;

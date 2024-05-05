@@ -20,9 +20,11 @@ public class TableGUI extends javax.swing.JFrame {
     private JButton modifyOrderButton, generateBillButton;
     private boolean orderConfirmed = false;
     private LocalTime closingTime = LocalTime.of(23, 0);
-    DefaultTableModel orderTableModel = new DefaultTableModel();
+    private static DefaultTableModel orderTableModel = new DefaultTableModel();
     JTable orderTable = new JTable(orderTableModel);
     private WaiterGUI waiterGUI;
+    private static String menuContent;
+    private WelcomeGUI welcomeGUI;
 
     /**
      * Creates new form TableGUI
@@ -32,11 +34,13 @@ public class TableGUI extends javax.swing.JFrame {
         initComponents();
         setTitle("Table GUI");
         setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         
         orderTableModel.addColumn("Plato");
         orderTableModel.addColumn("Cantidad");
         orderTableModel.addColumn("Precio");
+        
+        orderTable = new JTable(orderTableModel);
         
         JScrollPane scrollPane = new JScrollPane(orderTable);
         Container container = getContentPane();
@@ -79,6 +83,26 @@ public class TableGUI extends javax.swing.JFrame {
     private boolean isOrderAllowed() {
         LocalTime currentTime = LocalTime.now();
         return currentTime.isBefore(closingTime);
+    }
+    
+    public static void setMenuContent(String content){
+        menuContent = content;
+        String[] lines = content.split("\n");
+        for(String line:lines){
+            String[] parts = line.split(",");
+            if(parts.length>=3){
+                String dish = parts[0];
+                double price = Double.parseDouble(parts[1]);
+                //String type = parts[2];
+                
+                orderTableModel.addRow(new Object[]{dish, 1, price});
+            }
+        }
+        orderTableModel.fireTableDataChanged();
+    }
+    
+    public static String getMenuContent(){
+        return menuContent;
     }
 
     /**
@@ -137,7 +161,15 @@ public class TableGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 WaiterGUI waiterGUI = new WaiterGUI();
-                new TableGUI(waiterGUI).setVisible(true);
+                TableGUI tableGUI = new TableGUI(waiterGUI);
+                tableGUI.setVisible(true);
+                tableGUI.addWindowListener(new java.awt.event.WindowAdapter(){
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent windowEvent){
+                        tableGUI.setVisible(false);
+                        waiterGUI.setVisible(true);
+                    }
+                });
             }
         });
     }

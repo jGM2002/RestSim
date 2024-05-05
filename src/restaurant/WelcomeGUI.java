@@ -244,6 +244,7 @@ public class WelcomeGUI extends javax.swing.JFrame {
             String menuContent = MenuManager.loadMenuOfDay(selectedMenu);
             informationArea.setText(menuContent);
             updateMenuTable(selectedMenu);
+            TableGUI.setMenuContent(menuContent);
         }
         updateButtonState();
         updateInformationArea(isCatalan ?
